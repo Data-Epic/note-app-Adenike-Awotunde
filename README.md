@@ -1,4 +1,4 @@
-# Smart Note Manager
+# Smart Notes Manager
 
 This application is a python based note management system built using the principles of python object oriented programming(OOP). It allows users to create, organize, and manage different types of notes efficiently.
  
