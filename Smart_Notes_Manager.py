@@ -1,7 +1,7 @@
 import datetime
 
 class Note:
-    # Creating a base class 
+    # Creatie a base class 
     def __init__(self, created_at, content):
         """ Initialize a note object
             created_at(datetime): The time the note was created.
