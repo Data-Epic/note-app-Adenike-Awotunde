@@ -85,7 +85,7 @@ if __name__ == "__main__":
 while True:
     print("\nSmart Notes Manager")
     print("1. Add Text Note")
-    print("2. Add Reminder")
+    print("2. Add Reminder Note")
     print("3. Show Notes")
     print("4. Search Notes")
     print("5. Delete Note")
