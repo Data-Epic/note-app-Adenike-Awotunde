@@ -25,7 +25,7 @@ class TextNote(Note):
         super().display()
         return f"({self.title}) {self.created_at} ({self.content})"
     
-class Reminder(Note):
+class ReminderNote(Note):
     # A subclass for Reminder note
     def __init__(self, created_at, content, reminder_time):
         super().__init__(created_at, content)
@@ -33,7 +33,7 @@ class Reminder(Note):
         
     def display(self):
         super().display()
-        return f"Reminder: {self.reminder_time} | {self.created_at} ({self.content})"
+        return f"ReminderNote: {self.reminder_time} | {self.created_at} ({self.content})"
     
 class NoteManager:
     # A class for note manager
@@ -49,10 +49,10 @@ class NoteManager:
                 raise ValueError("TextNote requires a title.")
             note = TextNote(datetime.datetime.now(), content, title)
             
-        elif note_type == "Reminder": 
+        elif note_type == "ReminderNote": 
             if reminder_time is None:
                 raise ValueError("Reminder requires a reminder_time.")
-            note = Reminder(datetime.datetime.now(), content, reminder_time)
+            note = ReminderNote(datetime.datetime.now(), content, reminder_time)
             
         else:
             raise ValueError("Wrong note type")
