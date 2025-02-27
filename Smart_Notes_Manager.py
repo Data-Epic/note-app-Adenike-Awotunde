@@ -39,7 +39,7 @@ class ReminderNote(Note):
         
     def display(self):
         return f"ReminderNote: {self.note_ID}:{self.reminder_time} | {self.created_at} ({self.content})"
-        self.reminder_time = None
+        
     
 class NoteManager:
     # A class for note manager
