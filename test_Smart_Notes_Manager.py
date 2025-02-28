@@ -45,7 +45,7 @@ def test_reminder_note_creation_valid_time(setup_NoteManager):
 # Testing  Reminder Note with invalid time format
 def test_reminder_note_creation_invalid_time(setup_NoteManager):
     reminder_note = ReminderNote(datetime.datetime.now(), "Meeting", "invalid_time")
-    assert reminder_note.reminder_time is None
+    assert reminder_note.reminder_time is None, "Reminder time should be None for an invalid input"
     
 
 
@@ -66,7 +66,7 @@ def test_add_reminder_note(setup_NoteManager):
 
 
 # Test adding an invalid note type
-def test_add_invalid_note_type(setup_NoteManager)
+def test_add_invalid_note_type(setup_NoteManager):
     with pytest.raises(ValueError, match="Wrong note type"):
         setup_NoteManager.add_note("InvalidNoteType", "This note should not be added")
 
@@ -77,7 +77,7 @@ def test_add_text_note_without_title(setup_NoteManager):
 
 # Test adding ReminderNote without a reminder_time
 def test_add_reminder_note_without_time(setup_NoteManager):
-    with pytest.raises(ValueError, match="ReminderNote requires a reminder_time."):
+    with pytest.raises(ValueError, match=r"ReminderNote requires a reminder_time\."):
         setup_NoteManager.add_note("ReminderNote", "This note is missing a reminder time")
 
 
@@ -114,7 +114,7 @@ def test_search_existing_note(setup_NoteManager, capfd):
     assert "This is an important note" in result
 
 # Test searching for a non existing note
-def test_search_existing_note(setup_NoteManager, capfd):
+def test_search_non_exiting_note(setup_NoteManager):
     setup_NoteManager.add_note("TextNote", "This is an important note", title="Important")
 
     result = setup_NoteManager.search_note("Asssignment")
