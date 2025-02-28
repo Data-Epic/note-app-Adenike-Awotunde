@@ -95,43 +95,45 @@ if __name__ == "__main__":
     my_notes = NoteManager()
     
 # Making the app interactive for users
-while True:
-    print("\nSmart Notes Manager")
-    print("1. Add Text Note")
-    print("2. Add Reminder Note")
-    print("3. Show Notes")
-    print("4. Search Notes")
-    print("5. Delete Note")
-    print("6. Exit")
+def run_app():
+    while True:
+        print("\nSmart Notes Manager")
+        print("1. Add Text Note")
+        print("2. Add Reminder Note")
+        print("3. Show Notes")
+        print("4. Search Notes")
+        print("5. Delete Note")
+        print("6. Exit")
     
-    choice = input("Enter your choice: ")
+        choice = input("Enter your choice: ")
     
-    if choice == "1":
-        title = input("Enter title: ")
-        content = input("Enter content: ")
-        my_notes.add_note("TextNote", content, title=title)
+        if choice == "1":
+            title = input("Enter title: ")
+            content = input("Enter content: ")
+            my_notes.add_note("TextNote", content, title=title)
         
-    elif choice == "2":
-        content = input("Enter reminder content: ")
-        reminder_time = input("Enter reminder time (YYYY-MM-DD HH:MM AM/PM): ")
-        my_notes.add_note("ReminderNote", content, reminder_time=reminder_time)
+        elif choice == "2":
+            content = input("Enter reminder content: ")
+            reminder_time = input("Enter reminder time (YYYY-MM-DD HH:MM AM/PM): ")
+            my_notes.add_note("ReminderNote", content, reminder_time=reminder_time)
         
-    elif choice == "3":
-        my_notes.show_note()
+        elif choice == "3":
+            my_notes.show_note()
         
-    elif choice == "4":
-        keyword = input("Enter keyword to search: ")
-        my_notes.search_note(keyword)
+        elif choice == "4":
+            keyword = input("Enter keyword to search: ")
+            my_notes.search_note(keyword)
         
-    elif choice == "5":
-        try:
-            note_ID = int(input("Enter Note ID to delete: "))
-            my_notes.delete_note(note_ID)
-        except ValueError:
-            print("Invalid ID. Please enter a numeric value.")
+        elif choice == "5":
+            try:
+                note_ID = int(input("Enter Note ID to delete: "))
+                my_notes.delete_note(note_ID)
+            except ValueError:
+                print("Invalid ID. Please enter a numeric value.")
         
-    elif choice == "6":
-        print("Exiting Smart Notes Manager. Goodbye!")
-        break
-    else:
-        print("Invalid choice. Please try again.")
+        elif choice == "6":
+            print("Exiting Smart Notes Manager. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+    run_app() 

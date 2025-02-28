@@ -1,64 +1,137 @@
-# Import pytest and the script to test
 import pytest
 import datetime
-import Smart_Notes_Manager as Smart_Note
+from Smart_Notes_Manager import Note, TextNote, ReminderNote, NoteManager
 
-class test_Note :
-    def setup_method(self):
-        """ set up method to initialize a class based test for the parent class"""
-        self. creatd_at = datetime(2025, 2, 27, 8, 52, 0)
-        self.content = "This is a unit testing task"
-        self.note = (self.creatd_at, self.content)
-  
-    def test_init(self):
-        # Testing if note list is empty at initialization
-        assert len(Note) ==0
-        
-    def test_display(self):
-        # Testing if the display method will return the expected formatted string
-        expected_result = f"{self.created_at} ({self.content})"
-        assert self.note.display == expected_result
-        
-    
-class test_TextNote:
-    def setup_method(self):
-        """ set up method to intiallise class based test for the subclass TextNote"""
-        self.creatd_at = datetime(2025, 2, 27, 8, 52, 0)
-        self.content = "This is a text note"
-        self.title = "Test Title"
-        self.text_note =TextNote(self.created_time, self.content, self.title)
-        
-    def test_TextNote_inherit_from_Note(self):
-        # Testing if text note is inheriting from the parent class Note
-        assert isinstance(self.text_note, Note)
-        assert isinstance(self.text_note, TextNote)
-        
-    def test_display(self):
-        # Testing if the display method will return the expected formatted string
-        expected_result = f"{self.created_at} ({self.content})"
-        assert self.note.display == expected_result
-        
-        
-class test_ReminderNote:
-    def setup_method(self):
-        """ set up method to intiallise class based test for the subclass Reminder Note"""
-        self.creatd_at = datetime(2025, 2, 27, 8, 52, 0)
-        self.content = "This is a reminder to complete your task"
-        self.reminder_time = "10am"
-        self.reminder_note = ReminderNote(self.created_time, self.content, self.reminder_time)
-        
-    def test_ReminderNote_inherit_from_Note(self):
-        # Testing if text note is inheriting from the parent class Note
-        assert isinstance(self.reminder_note_note, Note)
-        assert isinstance(self.reminder_note_note, ReminderNote)
-        
-    def test_display(self):
-        # Testing if the display method will return the expected formatted string
-        expected_result = f"ReminderNote: {self.reminder_time} | {self.created_at} ({self.content})"
-        assert self.note.display == expected_result      
-                     
-    
+@pytest.fixture
+def setup_NoteManager():
+    """Fixture to set up a NoteManager instance for each test."""
+    return NoteManager()
 
+"""Note"""
+
+# Testing Note Parent class if it's initializing correctly
+def test_note_creation(setup_NoteManager):
+    created_at = datetime.datetime.now()
+    note = Note(created_at, "Sample note content")
+
+    assert note.created_at == created_at
+    assert note.content == "Sample note content"
+    assert note.note_ID is None  
+
+"""Text Note"""
+# Test TextNote subclass if its initializing correctly
+def test_text_note_creation(setup_NoteManager):
+    created_at = datetime.datetime.now()
+    text_note = TextNote(created_at, "This is a text note", "Sample Title")
+
+    assert text_note.created_at == created_at
+    assert text_note.content == "This is a text note"
+    assert text_note.title == "Sample Title"
+    assert text_note.display() == f"TextNote: {text_note.note_ID}: Sample Title - {created_at} (This is a text note)"
+
+
+
+"""Reminder  Note"""
+# Testing Reminder Note subclass with valif time format
+def test_reminder_note_creation_valid_time(setup_NoteManager):
+    created_at = datetime.datetime.now()
+    reminder_time = "2025-03-01 08:30 AM"
+    reminder_note = ReminderNote(created_at, "Doctor's appointment", reminder_time)
+
+    assert reminder_note.created_at == created_at
+    assert reminder_note.content == "Doctor's appointment"
+    assert reminder_note.reminder_time is not None
+
+# Testing  Reminder Note with invalid time format
+def test_reminder_note_creation_invalid_time(setup_NoteManager):
+    reminder_note = ReminderNote(datetime.datetime.now(), "Meeting", "invalid_time")
+    assert reminder_note.reminder_time is None
     
 
 
+"""Testing Add_Note Method"""
+# 1.Test adding Text note
+def test_add_note(setup_NoteManager):
+    setup_NoteManager.add_note("TextNote", "Meeting notes", title="Project Kickoff")
+
+    assert len(setup_NoteManager.notes) == 1
+    assert setup_NoteManager.notes[0][1].title == "Project Kickoff"
+
+# 2  Test adding Reminder Note
+def test_add_reminder_note(setup_NoteManager):
+    setup_NoteManager.add_note("ReminderNote", "Team stand-up", reminder_time="2025-03-02 09:00 AM")
+
+    assert len(setup_NoteManager.notes) == 1
+    assert isinstance(setup_NoteManager.notes[0][1], ReminderNote)
+
+
+# Test adding an invalid note type
+def test_add_invalid_note_type(setup_NoteManager)
+    with pytest.raises(ValueError, match="Wrong note type"):
+        setup_NoteManager.add_note("InvalidNoteType", "This note should not be added")
+
+# Test adding TextNote without a title
+def test_add_text_note_without_title(setup_NoteManager):
+    with pytest.raises(ValueError, match="TextNote requires a title."):
+        setup_NoteManager.add_note("TextNote", "This note is missing a title")
+
+# Test adding ReminderNote without a reminder_time
+def test_add_reminder_note_without_time(setup_NoteManager):
+    with pytest.raises(ValueError, match="ReminderNote requires a reminder_time."):
+        setup_NoteManager.add_note("ReminderNote", "This note is missing a reminder time")
+
+
+
+"""Testing the Delete Method"""
+
+# Test deleting an existing note
+def test_delete_existing_note(setup_NoteManager):
+    # add a text note
+    setup_NoteManager.add_note("TextNote", "Delete me", title="To Be Deleted")
+    # get the note ID of the added note
+    note_ID = setup_NoteManager.notes[0][0]  
+    #delete note using the fetched note ID
+    setup_NoteManager.delete_note(note_ID)
+    # Cheeck that after deletion the list is now empty
+    assert len(setup_NoteManager.notes) == 0  
+
+# Test deleting a non-existent note
+def test_delete_non_existent_note(setup_NoteManager):
+    with pytest.raises(ValueError, match="There is no note with such ID."):
+        # Test using invalid note ID
+        setup_NoteManager.delete_note(999)  
+        
+
+
+
+"""Testing the Search Method"""
+
+# Test searching for an existing note
+def test_search_existing_note(setup_NoteManager, capfd):
+    setup_NoteManager.add_note("TextNote", "This is an important note", title="Important")
+
+    result = setup_NoteManager.search_note("important")
+    assert "This is an important note" in result
+
+# Test searching for a non existing note
+def test_search_existing_note(setup_NoteManager, capfd):
+    setup_NoteManager.add_note("TextNote", "This is an important note", title="Important")
+
+    result = setup_NoteManager.search_note("Asssignment")
+    assert "Assignment" not in result
+
+
+
+
+"""Testing the Show Note Method"""
+
+def test_show_notes(setup_NoteManager):
+    setup_NoteManager.add_note("TextNote", "Fiction", title="Fairy-Tale")
+    setup_NoteManager.add_note("TextNote", "Note Two", title="Second Note")
+
+    result = setup_NoteManager.show_note()
+
+    assert "Fiction" in result
+    assert "Fairy-Tale" in result
+    assert "Note Two" in result
+    assert "Second Note" in result
