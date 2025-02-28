@@ -1,5 +1,6 @@
 import datetime
 
+# A parent class for Note
 class Note:
     # Creatie a base class 
     def __init__(self, created_at, content):
@@ -16,7 +17,7 @@ class Note:
         #Display the content of a note 
         return f"{self.note_id}: {self.created_at} ({self.content})"
     
-        
+#A subclass for TextNote
 class TextNote(Note):
     # A subclass for Text note
     def __init__(self, created_at, content, title):
@@ -25,28 +26,32 @@ class TextNote(Note):
         
     def display(self):
         return f"TextNote: {self.note_ID}: {self.title} - {self.created_at} ({self.content})"
-    
+
+#A Subclass for reminder Note
 class ReminderNote(Note):
     # A subclass for Reminder note
     def __init__(self, created_at, content, reminder_time):
         super().__init__(created_at, content)
         self.reminder_time = reminder_time
-        try:          
-            reminder_datetime = datetime.datetime.strptime(reminder_time, "%Y-%m-%d %I:%M %p")
-        except ValueError:
-            print("Invalid date/time format")
-            
+        valid_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %I:%M %p"]
+        for fmt in valid_formats:
+            try:
+                 self.reminder_time = datetime.datetime.strptime(reminder_time, fmt)
+            except ValueError:
+                print("Invalid date/time format")
+            self.reminder_time = None
         
     def display(self):
         return f"ReminderNote: {self.note_ID}:{self.reminder_time} | {self.created_at} ({self.content})"
         
-    
+# A subclass for Note Manager
 class NoteManager:
     # A class for note manager
     def __init__(self):
         self.notes = []
         self.note_ID = 0 
-        
+    
+    """Add Note method"""
     def add_note(self, note_type, content, title=None, reminder_time=None):
         self.note_ID += 1  # Increment ID
         
@@ -58,7 +63,7 @@ class NoteManager:
             
         elif note_type == "ReminderNote": 
             if reminder_time is None:
-                raise ValueError("Reminder requires a reminder_time.")
+                raise ValueError("ReminderNote requires a reminder_time.")
             note = ReminderNote(datetime.datetime.now(), content, reminder_time)
             note.note_ID = self.note_ID 
             
@@ -67,7 +72,7 @@ class NoteManager:
         self.notes.append((self.note_ID, note))
         
         
-        
+    """Delete Method"""
     def delete_note(self, note_ID):
         # Delete a Note
         initial_count = len(self.notes)
@@ -77,25 +82,35 @@ class NoteManager:
         else:
             raise ValueError("There is no note with such ID.")
     
+    
+    """Show Method"""
     def show_note(self):
-        """ Display all stored notes"""
-        for id, note in self.notes:
-            print(f"{id}: {note.display()}")
+        """Display all stored notes and return them as a list."""
+        notes_list = [f"{id}: {note.display()}" for id, note in self.notes]
+    
+        for note in notes_list:  # Keep the existing print functionality
+            print(note)
+        return notes_list  
             
+            
+    """Search Methid"""
     def search_note(self, keyword):
-        """Find note that contains a specific keyword"""
+    
+        """Find note that contains a specific keyword and return matching notes."""
         results = [note.display() for _, note in self.notes if keyword.lower() in note.content.lower()]
+    
         if results:
             for result in results:
                 print(result)
-        else: 
-            print('There is no note with this keyword')
+            return results  # Return matching notes
+        else:
+            print("There is no note with this keyword.")
+            return []  # Return an empty list if no match is found
 
-if __name__ == "__main__":
-    my_notes = NoteManager()
     
 # Making the app interactive for users
 def run_app():
+    my_notes=NoteManager()
     while True:
         print("\nSmart Notes Manager")
         print("1. Add Text Note")

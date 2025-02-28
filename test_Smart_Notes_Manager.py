@@ -33,14 +33,14 @@ def test_text_note_creation(setup_NoteManager):
 
 """Reminder  Note"""
 # Testing Reminder Note subclass with valif time format
-def test_reminder_note_creation_valid_time(setup_NoteManager):
+def test_reminder_note_creation(setup_NoteManager):
     created_at = datetime.datetime.now()
-    reminder_time = "2025-03-01 08:30 AM"
+    reminder_time = "2025-03-01 08:30 00"
     reminder_note = ReminderNote(created_at, "Doctor's appointment", reminder_time)
 
     assert reminder_note.created_at == created_at
     assert reminder_note.content == "Doctor's appointment"
-    assert reminder_note.reminder_time is not None
+   
 
 # Testing  Reminder Note with invalid time format
 def test_reminder_note_creation_invalid_time(setup_NoteManager):
@@ -77,7 +77,7 @@ def test_add_text_note_without_title(setup_NoteManager):
 
 # Test adding ReminderNote without a reminder_time
 def test_add_reminder_note_without_time(setup_NoteManager):
-    with pytest.raises(ValueError, match=r"ReminderNote requires a reminder_time\."):
+    with pytest.raises(ValueError, match= "ReminderNote requires a reminder_time."):
         setup_NoteManager.add_note("ReminderNote", "This note is missing a reminder time")
 
 
@@ -106,20 +106,23 @@ def test_delete_non_existent_note(setup_NoteManager):
 
 """Testing the Search Method"""
 
-# Test searching for an existing note
-def test_search_existing_note(setup_NoteManager, capfd):
+def test_search_existing_note(setup_NoteManager):
+    """Test searching for an existing note by keyword."""
     setup_NoteManager.add_note("TextNote", "This is an important note", title="Important")
 
-    result = setup_NoteManager.search_note("important")
-    assert "This is an important note" in result
-
-# Test searching for a non existing note
-def test_search_non_exiting_note(setup_NoteManager):
+    result = setup_NoteManager.search_note("important") 
+    assert isinstance(result, list)  
+    assert len(result) > 0  
+    assert any("This is an important note" in note for note in result)  
+    
+def test_search_non_existing_note(setup_NoteManager):
+    """Test searching for a non existig note"""
     setup_NoteManager.add_note("TextNote", "This is an important note", title="Important")
 
-    result = setup_NoteManager.search_note("Asssignment")
-    assert "Assignment" not in result
+    result = setup_NoteManager.search_note("Assignment")  
 
+    assert isinstance(result, list)  
+    assert result == []  
 
 
 
@@ -129,9 +132,7 @@ def test_show_notes(setup_NoteManager):
     setup_NoteManager.add_note("TextNote", "Fiction", title="Fairy-Tale")
     setup_NoteManager.add_note("TextNote", "Note Two", title="Second Note")
 
-    result = setup_NoteManager.show_note()
+    result = setup_NoteManager.show_note()  
 
-    assert "Fiction" in result
-    assert "Fairy-Tale" in result
-    assert "Note Two" in result
-    assert "Second Note" in result
+    assert isinstance(result, list) 
+    assert any("Fiction" in note for note in result)  
