@@ -7,9 +7,10 @@ def setup_NoteManager():
     """Fixture to set up a NoteManager instance for each test."""
     return NoteManager()
 
-"""Note"""
 
-# Testing Note Parent class if it's initializing correctly
+"""Note
+Testing Note Parent class if it's initializing correctly"""
+
 def test_note_creation(setup_NoteManager):
     created_at = datetime.datetime.now()
     note = Note(created_at, "Sample note content")
@@ -18,15 +19,18 @@ def test_note_creation(setup_NoteManager):
     assert note.content == "Sample note content"
     assert note.note_ID is None  
 
+
 """Text Note"""
 # Test TextNote subclass if its initializing correctly
 def test_text_note_creation(setup_NoteManager):
     created_at = datetime.datetime.now()
-    text_note = TextNote(created_at, "This is a text note", "Sample Title")
+    content = "This is a text note"
+    title = "Sample Title"
+    text_note = TextNote(created_at, content, title)
 
     assert text_note.created_at == created_at
-    assert text_note.content == "This is a text note"
-    assert text_note.title == "Sample Title"
+    assert text_note.content == content
+    assert text_note.title == title
     assert text_note.display() == f"TextNote: {text_note.note_ID}: Sample Title - {created_at} (This is a text note)"
 
 

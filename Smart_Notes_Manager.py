@@ -14,7 +14,7 @@ class Note:
           
     # Display Note
     def display(self):
-        #Display the content of a note 
+        """Display the content of a note """
         return f"{self.note_id}: {self.created_at} ({self.content})"
     
 #A subclass for TextNote
